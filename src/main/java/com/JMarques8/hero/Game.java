@@ -2,6 +2,8 @@ package com.JMarques8.hero;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
@@ -12,6 +14,8 @@ import java.io.IOException;
 public class Game {
 
     private Screen screen;
+    private int x = 10;
+    private int y = 10;
 
     public Game(){
         try {
@@ -29,14 +33,38 @@ public class Game {
 
     private void draw() throws IOException {
         screen.clear();
-        screen.setCharacter(10, 10, TextCharacter.fromCharacter('X')[0]);
+        screen.setCharacter(x, y, TextCharacter.fromCharacter('X')[0]);
         screen.refresh();
     }
     public void run() {
         try{
-            draw();
+            while(true) {
+                draw();
+                KeyStroke key = screen.readInput();
+                processKey(key);
+
+                if (key.getKeyType() == KeyType.Character && key.getCharacter() == ('q'))
+                    screen.close();
+                if (key.getKeyType() == KeyType.EOF)
+                    break;
+            }
+
         } catch (IOException e){
             e.printStackTrace();
+        }
+    }
+
+    private void processKey(KeyStroke key) {
+        System.out.println(key);
+        switch (key.getKeyType()) {
+            case ArrowUp:
+                y = y+1;
+            case ArrowDown:
+                y = y-1;
+            case ArrowLeft:
+                x = x-1;
+            case ArrowRight:
+                x = x+1;
         }
     }
 
